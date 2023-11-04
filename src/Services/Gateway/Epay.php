@@ -21,12 +21,12 @@ class Epay extends AbstractPayment
 
     public function __construct()
     {
-        $this->epay['apiurl'] = 'https://pay.pyclouds.com/';//
-        $this->epay['partner'] = $_ENV['pycloudspay']['epay_pid'];//易支付商户pid
-        $this->epay['key'] = $_ENV['pycloudspay']['epay_key'];//易支付商户Key
+        $this->epay['apiurl'] = $_ENV['epay']['epay_api_url'];//
+        $this->epay['partner'] = $_ENV['epay']['epay_pid'];//易支付商户pid
+        $this->epay['key'] = $_ENV['epay']['epay_key'];//易支付商户Key
         $this->epay['sign_type'] = strtoupper('MD5'); //签名方式
         $this->epay['input_charset'] = strtolower('utf-8');//字符编码
-        $this->epay['transport'] = $_ENV['pycloudspay']['transport'];//协议 http 或者https
+        $this->epay['transport'] = $_ENV['epay']['transport'];//协议 http 或者https
     }
 
     public function MetronPay($type, $price, $buyshop, $paylist_id=0)
@@ -55,8 +55,8 @@ class Epay extends AbstractPayment
             "pid" => trim($this->epay['partner']),
             "type" => $type,
             "out_trade_no" => $pl->tradeno,
-            "notify_url" => $_ENV['baseUrl'] . "/payment/notify/pycloudspay",
-            "return_url" => $_ENV['baseUrl'] . "/user/payment/return",
+            "notify_url" => $_ENV['baseUrl'] . "/payment/notify/epay",
+            "return_url" => $_ENV['baseUrl'] . "/user/code",
             "name" => $_ENV['appName'] . "充值" . $pl->total . "元",
             "money" => $pl->total,
             "sitename" => $_ENV['appName']
@@ -120,9 +120,9 @@ class Epay extends AbstractPayment
             $trade_status = $_GET['trade_status'];
             if ($trade_status == 'TRADE_SUCCESS') {
                 $this->postPayment($out_trade_no, $type);
-                return json_encode(['state' => 'success', 'msg' => '支付成功']);
+                die('SUCCESS');
             }else{
-                return json_encode(['state' => 'fail', 'msg' => '支付失败']);
+                die('FAIL');
             }
         } else {
             return '非法请求';

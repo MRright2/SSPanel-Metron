@@ -7,6 +7,7 @@ use App\Services\{ Mail, Config, MetronSetting };
 use App\Utils\{GA, Hash, Check, Tools };
 use App\Metron\{ MtAuth, Metron };
 use Exception;
+use Ramsey\Uuid\Uuid;
 
 class MtAgent extends \App\Controllers\BaseController
 {
@@ -80,7 +81,7 @@ class MtAgent extends \App\Controllers\BaseController
         }
 
         $edituser_config = $edituser->config;
-        if ($edituser_config['form_agent_create'] !== true) {
+        if (isset($edituser_config['form_agent_create']) && $edituser_config['form_agent_create'] !== true) {
             return '您无权操作通过邀请链接或邀请码注册的用户';
         }
 
@@ -112,7 +113,7 @@ class MtAgent extends \App\Controllers\BaseController
         }
 
         $edituser_config = $edituser->config;
-        if ($edituser_config['form_agent_create'] !== true) {
+        if (isset($edituser_config['form_agent_create']) && $edituser_config['form_agent_create'] !== true) {
             $res['ret'] = 0;
             $res['msg'] = '您无权操作通过邀请链接或邀请码注册的用户';
             return $response->getBody()->write(json_encode($res));
@@ -282,6 +283,7 @@ class MtAgent extends \App\Controllers\BaseController
         }
 
         $email     = trim($request->getParam('email'));
+        $shop_id     = $request->getParam('shop_id');
         $email     = strtolower($email);
         $suffix    = trim($request->getParam('email_suffix'));
 
@@ -309,13 +311,15 @@ class MtAgent extends \App\Controllers\BaseController
             return $response->getBody()->write(json_encode($res));
         }
 
+        $current_timestamp             = time();
         $newuser                       = new User();
         $pass                          = Tools::genRandomChar();
         $newuser->user_name            = $email;
         $newuser->email                = $email;
         $newuser->pass                 = Hash::passwordHash($pass);
-        $newuser->passwd               = Tools::genRandomChar(6);
-        $newuser->port                 = Tools::getAvPort();
+        $newuser->passwd               = Tools::genRandomChar(16);
+        $newuser->uuid                 = Uuid::uuid3(Uuid::NAMESPACE_DNS, $email . '|' . $current_timestamp);
+        $newuser->port                 = 0;
         $newuser->t                    = 0;
         $newuser->u                    = 0;
         $newuser->d                    = 0;
@@ -457,6 +461,12 @@ class MtAgent extends \App\Controllers\BaseController
 
         # 转余额
         if ($type === 1){
+            if ($total <= 0) {
+                $paytake->delete();
+                $res['ret'] = 0;
+                $res['msg'] = '提现金额需大于0元';
+                return $response->getBody()->write(json_encode($res));
+            }
             # 转至余额 直接创建 code 记录 和 增加余额
             $code               = new Code();
             $code->code         = '#'.$paytake->id.' - '.'返利转余额';

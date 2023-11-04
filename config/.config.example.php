@@ -90,8 +90,8 @@ $_ENV['reg_auto_reset_bandwidth'] = 0;                         //需要重置的
 $_ENV['random_group'] = '0';                       //注册时随机分组，注册时随机分配到的分组，多个分组请用英文半角逗号分隔
 
 $_ENV['reg_forbidden_ip'] = '127.0.0.0/8,::1/128';     //注册时默认禁止访问IP列表，半角英文逗号分割
-$_ENV['min_port'] = 10000;                     //用户端口池最小值
-$_ENV['max_port'] = 65535;                     //用户端口池最大值
+$_ENV['min_port'] = 10000;                     //用户端口池最小值，如果该数值为0则用户在注册的时候不会被分配多用户端口，适合纯V2Ray/Trojan机场
+$_ENV['max_port'] = 65535;                     //用户端口池最大值，如果该数值为0则用户在注册的时候不会被分配多用户端口，适合纯V2Ray/Trojan机场
 $_ENV['reg_forbidden_port'] = '';                        //注册时默认禁止访问端口列表，半角英文逗号分割，支持端口段
 
 $_ENV['mu_suffix'] = 'microsoft.com';           //单端口多用户混淆参数后缀，可以随意修改，但请保持前后端一致
@@ -303,11 +303,6 @@ $_ENV['vmq_secret']  = '';  // 通讯密钥
 $_ENV['vmq_url']  = '';     // 服务器地址
 $_ENV['vmq_param']  = 'bob666';  // (选填)传输参数
 
-#codepay码支付
-#wiki地址:https://goo.gl/dRwRDi  http://t.cn/RnsWjtB
-$_ENV['codepay_id'] = '';          //码支付ID
-$_ENV['codepay_key'] = '';          //码支付通信密钥
-
 #alipay,f2fpay
 $_ENV['f2fpay_app_id'] = '';
 $_ENV['f2fpay_p_id'] = '';
@@ -326,11 +321,6 @@ $_ENV['pmw_privatekey'] = '';
 $_ENV['pmw_widget'] = 'm2_1';
 $_ENV['pmw_height'] = '350px';
 
-# BitPay 数字货币支付（USDT、比特币、以太坊、EOS等） 商户后台获取授权码 https://merchants.mugglepay.com/
-#   注册即可使用USDT收款，无需任何费用
-#   客服和技术 24x7 在线支持： https://t.me/joinchat/GLKSKhUnE4GvEAPgqtChAQ
-$_ENV['bitpay_secret'] = '';
-
 #PayJs
 $_ENV['payjs_mchid'] = '';
 $_ENV['payjs_key'] = '';
@@ -338,6 +328,12 @@ $_ENV['payjs_key'] = '';
 #paytaro http://v1.paytaro.com/#/dashboard
 $_ENV['paytaro_app_id'] = '';
 $_ENV['paytaro_app_secret'] = '';
+
+#bobpay @bob_pay_bot https://faka.bob1.xyz/buy/13
+$_ENV['tron_api_url'] = 'https://pay.bobu.me';
+$_ENV['tron_app_id'] = '';
+$_ENV['tron_app_secret'] = '';
+
 
 #wolfpay
 $_ENV['wolfpay'] = [
@@ -353,8 +349,9 @@ $_ENV['mgate_api_url'] = '';
 $_ENV['mgate_app_id'] = '';
 $_ENV['mgate_app_secret'] = '';
 
-#pycloudspay
-$_ENV['pycloudspay'] = [
+#epay
+$_ENV['epay'] = [
+    'epay_api_url' => '',
     'epay_pid' => '',
     'epay_key' => '',
     'transport' => 'https',
